@@ -1,4 +1,4 @@
-from flask import Flask, g
+from flask import Flask, g, request
 from proxypool.storages.redis import RedisClient
 from proxypool.setting import API_HOST, API_PORT, API_THREADED
 
@@ -35,6 +35,21 @@ def get_proxy():
     """
     conn = get_conn()
     return conn.random().string()
+
+
+@app.route('/delete')
+def delete_proxy():
+    """
+    delete a proxy
+    :return:
+    """
+    proxy = request.args.get("proxy", None)
+    if not proxy:
+        return {'code': 'nullProxy'}
+    conn = get_conn()
+    if not conn.delete(proxy):
+        return {'code': 'notExistsProxy'}
+    return {'code': 'SUCCESS'}
 
 
 @app.route('/all')

@@ -77,6 +77,17 @@ class RedisClient(object):
             logger.info(f'{proxy.string()} current score {score}, remove')
             self.db.zrem(REDIS_KEY, proxy.string())
 
+    def delete(self, proxy: str) -> int:
+        """
+        delete proxy
+        :param proxy: proxy
+        :return:
+        """
+        logger.info(f'{proxy} remove')
+        if self.db.zrem(REDIS_KEY, proxy):
+            return True
+        return False
+
     def exists(self, proxy: Proxy) -> bool:
         """
         if proxy exists
