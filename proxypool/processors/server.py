@@ -1,6 +1,6 @@
 from flask import Flask, g, request
 from proxypool.storages.redis import RedisClient
-from proxypool.setting import API_HOST, API_PORT, API_THREADED
+from proxypool.setting import API_HOST, API_PORT, API_THREADED, PROXY_SCORE_MAX, PROXY_SCORE_MIN
 
 
 __all__ = ['app']
@@ -73,8 +73,10 @@ def get_count():
     get the count of proxies
     :return: count, int
     """
+    min = request.args.get("min", PROXY_SCORE_MIN)
+    max = request.args.get("max", PROXY_SCORE_MAX)
     conn = get_conn()
-    return str(conn.count())
+    return str(conn.count(min, max))
 
 
 if __name__ == '__main__':

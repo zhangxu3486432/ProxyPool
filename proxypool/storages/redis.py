@@ -107,12 +107,12 @@ class RedisClient(object):
             return self.db.zadd(REDIS_KEY, PROXY_SCORE_MAX, proxy.string())
         return self.db.zadd(REDIS_KEY, {proxy.string(): PROXY_SCORE_MAX})
 
-    def count(self) -> int:
+    def count(self, min, max) -> int:
         """
         get count of proxies
         :return: count, int
         """
-        return self.db.zcard(REDIS_KEY)
+        return self.db.zcount(REDIS_KEY, min, max)
 
     def all(self) -> List[Proxy]:
         """
