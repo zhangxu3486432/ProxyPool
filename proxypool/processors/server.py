@@ -44,7 +44,7 @@ def decrease_score():
     :return:
     """
     proxy = request.args.get("proxy", None)
-    score = request.args.get("score", -1)
+    score = request.args.get("score", -10)
     if not proxy:
         return {'code': 'nullProxy'}
     conn = get_conn()
