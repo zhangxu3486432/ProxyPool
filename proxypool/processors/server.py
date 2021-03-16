@@ -1,6 +1,6 @@
 from flask import Flask, g, request
 from proxypool.storages.redis import RedisClient
-from proxypool.setting import API_HOST, API_PORT, API_THREADED, PROXY_SCORE_MAX, PROXY_SCORE_MIN
+from proxypool.setting import API_HOST, API_PORT, API_THREADED, PROXY_SCORE_MAX, PROXY_SCORE_MIN, PROXY_DECREASE_SCORE
 
 
 __all__ = ['app']
@@ -44,7 +44,7 @@ def decrease_score():
     :return:
     """
     proxy = request.args.get("proxy", None)
-    score = request.args.get("score", -10)
+    score = request.args.get("score", PROXY_DECREASE_SCORE)
     if not proxy:
         return {'code': 'nullProxy'}
     conn = get_conn()

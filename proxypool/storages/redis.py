@@ -2,7 +2,7 @@ import redis
 from proxypool.exceptions import PoolEmptyException
 from proxypool.schemas.proxy import Proxy
 from proxypool.setting import REDIS_HOST, REDIS_PORT, REDIS_PASSWORD, REDIS_DB, REDIS_KEY, PROXY_SCORE_MAX, PROXY_SCORE_MIN, \
-    PROXY_SCORE_INIT
+    PROXY_SCORE_INIT, PROXY_DECREASE_SCORE
 from random import choice
 from typing import List
 from loguru import logger
@@ -68,16 +68,16 @@ class RedisClient(object):
         :return: new score
         """
         if IS_REDIS_VERSION_2:
-            self.db.zincrby(REDIS_KEY, proxy.string(), -10)
+            self.db.zincrby(REDIS_KEY, proxy.string(), PROXY_DECREASE_SCORE)
         else:
-            self.db.zincrby(REDIS_KEY, -10, proxy.string())
+            self.db.zincrby(REDIS_KEY, PROXY_DECREASE_SCORE, proxy.string())
         score = self.db.zscore(REDIS_KEY, proxy.string())
-        logger.info(f'{proxy.string()} score decrease 10, current {score}')
+        logger.info(f'{proxy.string()} score decrease {PROXY_DECREASE_SCORE}, current {score}')
         if score <= PROXY_SCORE_MIN:
             logger.info(f'{proxy.string()} current score {score}, remove')
             self.db.zrem(REDIS_KEY, proxy.string())
 
-    def decrease_score(self, proxy: str, score=-10) -> int:
+    def decrease_score(self, proxy: str, score=PROXY_DECREASE_SCORE) -> int:
         """
         decrease proxy score
         :param proxy: proxy
