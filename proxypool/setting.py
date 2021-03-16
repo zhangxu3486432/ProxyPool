@@ -43,7 +43,7 @@ REDIS_KEY = env.str('REDIS_KEY', 'proxies:universal')
 # definition of proxy scores
 PROXY_SCORE_MAX = 100
 PROXY_SCORE_MIN = 0
-PROXY_SCORE_INIT = 10
+PROXY_SCORE_INIT = env.int('PROXY_SCORE_INIT', 30)
 PROXY_DECREASE_SCORE = env.int('PROXY_DECREASE_SCORE', -50)
 
 # definition of proxy number
