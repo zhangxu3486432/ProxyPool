@@ -37,17 +37,18 @@ def get_proxy():
     return conn.random().string()
 
 
-@app.route('/delete')
-def delete_proxy():
+@app.route('/decrease')
+def decrease_score():
     """
-    delete a proxy
+    decrease proxy score
     :return:
     """
     proxy = request.args.get("proxy", None)
+    score = request.args.get("score", -1)
     if not proxy:
         return {'code': 'nullProxy'}
     conn = get_conn()
-    if not conn.delete(proxy):
+    if not conn.decrease_score(proxy, score):
         return {'code': 'notExistsProxy'}
     return {'code': 'SUCCESS'}
 

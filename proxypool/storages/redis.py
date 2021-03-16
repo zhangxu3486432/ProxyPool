@@ -77,14 +77,18 @@ class RedisClient(object):
             logger.info(f'{proxy.string()} current score {score}, remove')
             self.db.zrem(REDIS_KEY, proxy.string())
 
-    def delete(self, proxy: str) -> int:
+    def decrease_score(self, proxy: str, score=-1) -> int:
         """
-        delete proxy
+        decrease proxy score
         :param proxy: proxy
         :return:
         """
-        logger.info(f'{proxy} remove')
-        if self.db.zrem(REDIS_KEY, proxy):
+        logger.info(f'{proxy} decrease {score}')
+        if IS_REDIS_VERSION_2:
+            res = self.db.zincrby(REDIS_KEY, proxy, score)
+        else:
+            res = self.db.zincrby(REDIS_KEY, score, proxy)
+        if res:
             return True
         return False
 
@@ -107,7 +111,7 @@ class RedisClient(object):
             return self.db.zadd(REDIS_KEY, PROXY_SCORE_MAX, proxy.string())
         return self.db.zadd(REDIS_KEY, {proxy.string(): PROXY_SCORE_MAX})
 
-    def count(self, min, max) -> int:
+    def count(self, min=PROXY_SCORE_MIN, max=PROXY_SCORE_MAX) -> int:
         """
         get count of proxies
         :return: count, int
